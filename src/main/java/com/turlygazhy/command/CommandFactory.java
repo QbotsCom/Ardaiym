@@ -14,6 +14,18 @@ public class CommandFactory {
         switch (type) {
             case SHOW_INFO:
                 return new ShowInfoCommand();
+            case ADMIN_MENU:
+                return new AdminMenuCommand();
+            case ADD_TO_PARTICIPANT_OD_STOCK:
+                return new AddToParticipantOfStock();
+            case ACCEPT_INVITE:
+                return new AcceptUserInviteCommand();
+            case ADMIN_NEW_DISTRIBUTION:
+                return new NewDistributionCommand();
+            case ADMIN_NEW_STOCK:
+                return new NewStockCommand();
+            case SHOW_STOCK:
+                return new ShowStocksCommand();
             default:
                 throw new NotRealizedMethodException("Not realized for type: " + type);
         }

@@ -85,12 +85,17 @@ public class DaoFactory {
         return new GoalDao(connection);
     }
 
-    public ThesisDao getThesisDao() {
-        return new ThesisDao(connection);
-    }
-
     public SavedResultsDao getSavedResultsDao() {
         return new SavedResultsDao(connection);
     }
 
-}
+    public StockDao getStockDao(){
+        return new StockDao(connection);
+    }
+
+    public ParticipantOfStockDao getParticipantOfStackDao(){
+        return new ParticipantOfStockDao(connection);
+    }
+    }
+
+

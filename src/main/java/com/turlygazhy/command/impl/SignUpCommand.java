@@ -1,16 +1,21 @@
 package com.turlygazhy.command.impl;
 
+import com.sun.xml.internal.ws.api.ha.StickyFeature;
 import com.turlygazhy.Bot;
 import com.turlygazhy.command.Command;
 import com.turlygazhy.entity.User;
 import com.turlygazhy.entity.WaitingType;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.replykeyboard.ForceReplyKeyboard;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
+import org.telegram.telegrambots.api.objects.replykeyboard.*;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by lol on 02.06.2017.
@@ -83,12 +88,24 @@ public class SignUpCommand extends Command {
                 user = userDao.getUserByChatId(user.getChatId());
 
                 bot.sendMessage(new SendMessage()
-                .setChatId(groupDao.select(1).getChatId())
-                .setText(messageDao.getMessageText(18) + user.toString())
-                .setReplyMarkup(keyboardMarkUpDao.select(6)));
+                        .setChatId(groupDao.select(1).getChatId())
+                        .setText(messageDao.getMessageText(18) + user.getName())
+                        .setReplyMarkup(getInlineKeyboard()));
                 return true;
 
         }
         return false;
+    }
+
+    private ReplyKeyboard getInlineKeyboard() throws SQLException {
+        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+        List<InlineKeyboardButton> row = new ArrayList<>();
+        row.add(new InlineKeyboardButton()
+                .setText(buttonDao.getButtonText(24))
+                .setCallbackData(String.valueOf(user.getId()) + " cmd=" + buttonDao.getButtonText(24)));
+        buttons.add(row);
+        keyboardMarkup.setKeyboard(buttons);
+        return keyboardMarkup;
     }
 }

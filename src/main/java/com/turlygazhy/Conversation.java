@@ -38,19 +38,21 @@ public class Conversation {
             command = commandService.getCommand(inputtedText);
         } catch (CommandNotFoundException e) {
             if (updateMessage.isGroupMessage()) {
-                if (command == null){
-                    AcceptUserInviteCommand acceptUserInviteCommand = new AcceptUserInviteCommand();
-                    acceptUserInviteCommand.execute(update, bot);
-                    command = acceptUserInviteCommand;
-                    return;
+                if(update.getCallbackQuery().getData() != null){
+                    String commandString = update.getCallbackQuery().getData();
+                    commandString = commandString.substring(commandString.indexOf("cmd=")+4);
+                    try {
+                        command = commandService.getCommand(commandString);
+                    } catch (CommandNotFoundException e1) {
+                        e1.printStackTrace();
+                    }
                 }
+//                return;
             }
             if (command == null) {
-                ShowInfoCommand showInfoCommand = new ShowInfoCommand();
+                command = new ShowInfoCommand();
                 int cannotHandleUpdateMessageId = 7;
-                showInfoCommand.setMessageId(cannotHandleUpdateMessageId);
-                showInfoCommand.execute(update, bot);
-                return;
+                command.setMessageId(cannotHandleUpdateMessageId);
             }
         }
 

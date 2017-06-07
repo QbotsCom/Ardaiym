@@ -11,7 +11,7 @@ public enum WaitingType {
     CITY,
     SEX,
     BIRTHDAY,
-    HAVE_CAR, ACCEPT,
+    HAVE_CAR, ACCEPT, DESCRIPTION, DATE, MESSAGE, TYPE_OF_WORK, STOCK_COMMAND,
 
 
 }

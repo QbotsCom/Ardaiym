@@ -22,8 +22,7 @@ import java.util.List;
  */
 
 public class ShowInfoCommand extends Command {
-    private SignUpCommand signUpCommand;
-    private MainMenuCommand mainMenuCommand;
+    private Command command;
 
     public ShowInfoCommand() throws SQLException {
     }
@@ -31,31 +30,27 @@ public class ShowInfoCommand extends Command {
     @Override
     public boolean execute(Update update, Bot bot) throws SQLException, TelegramApiException {
         User user;
-
         initMessage(update, bot);
 
-        if (updateMessage.isGroupMessage()){
+        if (updateMessage.isGroupMessage()) {
             return true;
         }
 
-        if (signUpCommand != null) {
-            return signUpCommand.execute(update, bot);
+        if (command != null) {
+            return command.execute(update, bot);
         }
 
-        if (mainMenuCommand != null) {
-            return mainMenuCommand.execute(update, bot);
-        }
         user = userDao.getUserByChatId(chatId);
         if (user == null) {
             sendMessage(10, chatId, bot);   // Чтобы продолжить, нужно зарегистрироваться
-            signUpCommand = new SignUpCommand();
-            return signUpCommand.execute(update, bot);
+            command = new SignUpCommand();
+            return command.execute(update, bot);
         }
-        if (user.isAdded()) {
-            mainMenuCommand = new MainMenuCommand();
-            return mainMenuCommand.execute(update, bot);
-        }
-        return true;
 
+        if (user.isAdded()) {
+            command = new MainMenuCommand();
+            return command.execute(update, bot);
+        }
+        return false;
     }
 }

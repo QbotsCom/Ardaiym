@@ -5,7 +5,6 @@ import com.turlygazhy.command.Command;
 import com.turlygazhy.entity.User;
 import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import java.sql.SQLException;
@@ -21,24 +20,25 @@ public class AcceptUserInviteCommand extends Command {
     public boolean execute(Update update, Bot bot) throws SQLException, TelegramApiException {
         initMessage(update, bot);
 
-        if (updateMessageText.equals(buttonDao.getButtonText(24))) {
-            String userId = updateMessage.getText().substring(11);
-            userId = userId.substring(3, userId.indexOf(" "));
-            System.out.println(userId);
-            User user = userDao.getUserByUserId(Long.valueOf(userId));
-            user.setAdded(true);
-//            user.setAddedBy(Long.valueOf(update.getMessage().)); // todo взять пользователя, который принял нового пользователя
-            userDao.updateUser(user);
+        Long addedBy = update.getCallbackQuery().getFrom().getId().longValue();
+        sendMessage(88, addedBy, bot);    // Ждите...
 
-            sendMessage(88, user.getAddedBy(), bot);
-            sendMessage(19, user.getChatId(), bot);
+        String userId = update.getCallbackQuery().getData();
+        User user = userDao.getUserByUserId(Long.valueOf(userId.substring(0, userId.indexOf(" "))));
+        user.setAdded(true);
+        user.setAddedBy(addedBy);
+        userDao.updateUser(user);
 
-            bot.editMessageText(new EditMessageText()
-                    .setText("OK")
-                    .setChatId(chatId)
-                    .setMessageId(updateMessage.getMessageId()));
-        }
+        sendMessage(19, user.getChatId(), bot);     // Ваша кондитатура одобрена
+        sendMessage("user " + user.getName() + "has added", addedBy, bot);
 
-        return false;
+
+        bot.editMessageText(new EditMessageText()
+                .setText("OK")
+                .setChatId(chatId)
+                .setMessageId(updateMessage.getMessageId()));
+
+        return true;
+
     }
 }

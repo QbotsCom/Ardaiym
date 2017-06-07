@@ -10,7 +10,6 @@ import org.telegram.telegrambots.api.methods.ParseMode;
 import org.telegram.telegrambots.api.methods.send.SendContact;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Contact;
 import org.telegram.telegrambots.api.objects.Update;
@@ -44,8 +43,10 @@ public abstract class Command {
     protected ReservationDao reservationDao = factory.getReservationDao();
     protected GroupDao groupDao = factory.getGroupDao();
     protected GoalDao goalDao = factory.getGoalDao();
-    protected ThesisDao thesisDao = factory.getThesisDao();
     protected SavedResultsDao savedResultsDao = factory.getSavedResultsDao();
+    protected StockDao stockDao = factory.getStockDao();
+    protected ParticipantOfStockDao participantOfStockDao = factory.getParticipantOfStackDao();
+
 
     protected WaitingType waitingType;
     protected org.telegram.telegrambots.api.objects.Message updateMessage;
@@ -191,26 +192,26 @@ public abstract class Command {
         }
     }
 
-//    protected String prevText = messageDao.getMessageText(89);
-//    protected String nextText = messageDao.getMessageText(90);
+    protected String prevText = messageDao.getMessageText(89);
+    protected String nextText = messageDao.getMessageText(90);
 
-//    protected List<InlineKeyboardButton> getNextPrevRows(boolean prev, boolean next) {
-//        List<InlineKeyboardButton> row = new ArrayList<>();
-//
-//        if (prev) {
-//            InlineKeyboardButton prevButton = new InlineKeyboardButton();
-//            prevButton.setText(prevText);
-//            prevButton.setCallbackData(prevText);
-//            row.add(prevButton);
-//        }
-//        if (next) {
-//            InlineKeyboardButton nextButton = new InlineKeyboardButton();
-//            nextButton.setText(nextText);
-//            nextButton.setCallbackData(nextText);
-//            row.add(nextButton);
-//        }
-//
-//        return row;
-//    }
+    protected List<InlineKeyboardButton> getNextPrevRows(boolean prev, boolean next) {
+        List<InlineKeyboardButton> row = new ArrayList<>();
+
+        if (prev) {
+            InlineKeyboardButton prevButton = new InlineKeyboardButton();
+            prevButton.setText(prevText);
+            prevButton.setCallbackData(prevText);
+            row.add(prevButton);
+        }
+        if (next) {
+            InlineKeyboardButton nextButton = new InlineKeyboardButton();
+            nextButton.setText(nextText);
+            nextButton.setCallbackData(nextText);
+            row.add(nextButton);
+        }
+
+        return row;
+    }
 
 }

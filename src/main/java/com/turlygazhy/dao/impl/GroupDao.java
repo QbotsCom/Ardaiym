@@ -15,6 +15,8 @@ import java.util.List;
  * Created by user on 2/22/17.
  */
 public class GroupDao {
+    public static final Long GROUP_ID = -180777328l;
+
     private static final Logger logger = LoggerFactory.getLogger(GroupDao.class);
 
     private final Connection connection;

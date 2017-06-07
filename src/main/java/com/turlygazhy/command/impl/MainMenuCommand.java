@@ -14,6 +14,7 @@ import java.sql.SQLException;
 /**
  * Created by lol on 02.06.2017.
  */
+
 public class MainMenuCommand extends Command {
 
     protected MainMenuCommand() throws SQLException {
@@ -23,8 +24,40 @@ public class MainMenuCommand extends Command {
     public boolean execute(Update update, Bot bot) throws SQLException, TelegramApiException {
         initMessage(update, bot);
 
-        sendMessage(5, chatId, bot);        // Главное меню
-        waitingType = WaitingType.COMMAND;
+        if (waitingType == null) {
+            sendMessage(5, chatId, bot);        // Главное меню
+            waitingType = WaitingType.COMMAND;
+            return false;
+        }
+
+        switch (waitingType) {
+            case COMMAND:
+                if (updateMessageText.equals(buttonDao.getButtonText(50))) {     // О нас
+                    sendMessage("About us", chatId, bot);
+                }
+
+                if (updateMessageText.equals(buttonDao.getButtonText(51))) {     // Контакты
+                    sendMessage("Contacts", chatId, bot);
+                }
+
+                if (updateMessageText.equals(buttonDao.getButtonText(52))) {     // Личный кабинет
+                    sendMessage("Personal Area", chatId, bot);
+
+                }
+
+                if (updateMessageText.equals(buttonDao.getButtonText(53))) {     // Группа
+                    sendMessage("Group", chatId, bot);
+                }
+
+                if (updateMessageText.equals(buttonDao.getButtonText(54))) {     // Планы на год
+                    sendMessage("Plans", chatId, bot);
+                }
+
+                if (updateMessageText.equals(buttonDao.getButtonText(55))) {     // Новости
+                    sendMessage("News", chatId, bot);
+                }
+                return false;
+        }
 
 //        Message message;
 //        message = messageDao.getMessage(messageId);
