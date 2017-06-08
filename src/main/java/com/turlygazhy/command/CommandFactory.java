@@ -26,6 +26,10 @@ public class CommandFactory {
                 return new NewStockCommand();
             case SHOW_STOCK:
                 return new ShowStocksCommand();
+            case EDIT_DESCRIPTION:
+                return new EditDescriptionCommand();
+            case EDIT_NEWS:
+                return new NewsMenuCommand();
             default:
                 throw new NotRealizedMethodException("Not realized for type: " + type);
         }

@@ -4,6 +4,7 @@ import com.turlygazhy.Bot;
 import com.turlygazhy.dao.DaoFactory;
 import com.turlygazhy.dao.GoalDao;
 import com.turlygazhy.dao.impl.*;
+import com.turlygazhy.entity.AboutMessage;
 import com.turlygazhy.entity.Message;
 import com.turlygazhy.entity.WaitingType;
 import org.telegram.telegrambots.api.methods.ParseMode;
@@ -46,7 +47,8 @@ public abstract class Command {
     protected SavedResultsDao savedResultsDao = factory.getSavedResultsDao();
     protected StockDao stockDao = factory.getStockDao();
     protected ParticipantOfStockDao participantOfStockDao = factory.getParticipantOfStackDao();
-
+    protected AboutMessageDao aboutMessageDao = factory.getAboutMessageDao();
+    protected NewsDao newsDao = factory.getNewsDao();
 
     protected WaitingType waitingType;
     protected org.telegram.telegrambots.api.objects.Message updateMessage;

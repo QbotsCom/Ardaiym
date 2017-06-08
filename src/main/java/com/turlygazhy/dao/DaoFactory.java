@@ -2,6 +2,7 @@ package com.turlygazhy.dao;
 
 import com.turlygazhy.connection_pool.ConnectionPool;
 import com.turlygazhy.dao.impl.*;
+import com.turlygazhy.entity.AboutMessage;
 
 import java.sql.Connection;
 
@@ -95,6 +96,14 @@ public class DaoFactory {
 
     public ParticipantOfStockDao getParticipantOfStackDao(){
         return new ParticipantOfStockDao(connection);
+    }
+
+    public AboutMessageDao getAboutMessageDao() {
+        return new AboutMessageDao(connection);
+    }
+
+    public NewsDao getNewsDao() {
+        return new NewsDao(connection);
     }
     }
 

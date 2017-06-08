@@ -25,7 +25,7 @@ public class UserDao {
     private static final int PARAMETER_CHAT_ID = 1;
     private static final int CHAT_ID_COLUMN_INDEX = 2;
     private static final int USER_ID_COLUMN_INDEX = 1;
-    public static final int ADMIN_ID = 17;
+    public static final int ADMIN_ID = 1;
     private Connection connection;
 
     public UserDao(Connection connection) {
