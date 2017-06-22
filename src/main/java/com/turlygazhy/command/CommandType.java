@@ -12,9 +12,11 @@ public enum CommandType {
     ACCEPT_INVITE(4),
     EDIT_DESCRIPTION(5),
     EDIT_NEWS(6),
+    ADD_ADMIN(14),
     ADMIN_NEW_STOCK(20),
     ADMIN_NEW_DISTRIBUTION(21),
     SHOW_STOCK(22);
+
 
     private final int id;
 

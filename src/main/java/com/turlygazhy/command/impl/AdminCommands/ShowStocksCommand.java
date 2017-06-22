@@ -1,26 +1,33 @@
-package com.turlygazhy.command.impl;
+package com.turlygazhy.command.impl.AdminCommands;
 
 import com.turlygazhy.Bot;
 import com.turlygazhy.command.Command;
 import com.turlygazhy.entity.ParticipantOfStock;
 import com.turlygazhy.entity.Stock;
+import com.turlygazhy.entity.User;
 import com.turlygazhy.entity.WaitingType;
+import javassist.bytecode.ExceptionsAttribute;
 import org.telegram.telegrambots.api.methods.ParseMode;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by lol on 06.06.2017.
  */
 public class ShowStocksCommand extends Command {
-    List<Stock> stocks;
-    Stock stock;
-    int stockIndex = 0;
+    private List<Stock> stocks;
+    private Stock stock;
 
     public ShowStocksCommand() throws SQLException {
     }
@@ -53,7 +60,7 @@ public class ShowStocksCommand extends Command {
                 }
 
                 if (updateMessageText.equals(buttonDao.getButtonText(46))) {    // Предстоящие акции
-                    stocks = stockDao.getAllStocks();
+                    stocks = stockDao.getAllStocks(false);
                     StringBuilder sb = new StringBuilder();
                     Date date = new Date();
                     int dateInt = date.getDate() + (date.getMonth() + 1) * 100;
@@ -76,10 +83,9 @@ public class ShowStocksCommand extends Command {
 
                 if (updateMessageText.startsWith("/id")) {
                     int stockId = Integer.parseInt(updateMessageText.substring(3));
-                    for (int i = 0; i < stocks.size(); i++) {
-                        if (stocks.get(i).getId() == stockId) {
-                            stock = stocks.get(i);
-                            stockIndex = i;
+                    for (Stock stock1 : stocks) {
+                        if (stock1.getId() == stockId) {
+                            stock = stock1;
                             break;
                         }
                     }
@@ -100,31 +106,17 @@ public class ShowStocksCommand extends Command {
                     return false;
                 }
 
-                if (updateMessageText.equals(buttonDao.getButtonText(60))) {    // Следующая акция
-                    stockIndex++;
-                    if (stocks.size() >= stockIndex) {
-                        stockIndex--;
+                if (updateMessageText.equals(buttonDao.getButtonText(60))) {    // Завершить акцию
+                    stock.setFinished(true);
+                    stockDao.updateStock(stock);
+                    sendMessage("Stock was finished", chatId, bot);
+                    List<User> users = new ArrayList<>();
+                    for (ParticipantOfStock participantOfStock : stock.getParticipantOfStocks()) {
+                        if (!userContains(participantOfStock.getUser(), users)) {
+                            users.add(participantOfStock.getUser());
+                        }
                     }
-                    stock = stocks.get(stockIndex);
-                    bot.sendMessage(new SendMessage()
-                            .setText(stock.toString())
-                            .setChatId(chatId)
-                            .setParseMode(ParseMode.HTML)
-                            .setReplyMarkup(keyboardMarkUpDao.select(16)));
-                    return false;
-                }
-
-                if (updateMessageText.equals(buttonDao.getButtonText(61))) {     // Предыдущая акция
-                    stockIndex--;
-                    if (stocks.size() < 0) {
-                        stockIndex++;
-                    }
-                    stock = stocks.get(stockIndex);
-                    bot.sendMessage(new SendMessage()
-                            .setText(stock.toString())
-                            .setChatId(chatId)
-                            .setParseMode(ParseMode.HTML)
-                            .setReplyMarkup(keyboardMarkUpDao.select(16)));
+                    sendSurvey(users, bot);
                     return false;
                 }
 
@@ -153,6 +145,47 @@ public class ShowStocksCommand extends Command {
                 return false;
         }
 
+        return false;
+    }
+
+    private void sendSurvey(List<User> users, Bot bot) throws SQLException, TelegramApiException {
+        ReplyKeyboard keyboardMarkup = getSurveyKeyboard();
+        for (User user : users) {
+            try {
+//                sendMessage("Survey", user.getChatId(), bot);
+                bot.sendMessage(new SendMessage()
+                        .setChatId(user.getChatId())
+                        .setText("Survey")
+                        .setReplyMarkup(keyboardMarkup));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                sendMessage("BAN FROM: " + user.getName(), chatId, bot);
+            }
+
+        }
+    }
+
+    private ReplyKeyboard getSurveyKeyboard() {
+        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        for (int i = 1; i < 6; i++) {
+            List<InlineKeyboardButton> row = new ArrayList<>();
+            InlineKeyboardButton button = new InlineKeyboardButton();
+            button.setText(String.valueOf(i));
+            button.setCallbackData("cmd=SurveyCommand rating=" + i);
+            row.add(button);
+            keyboard.add(row);
+        }
+        keyboardMarkup.setKeyboard(keyboard);
+        return keyboardMarkup;
+    }
+
+    private boolean userContains(User user, List<User> users) {
+        for (User user1 : users) {
+            if (Objects.equals(user.getChatId(), user1.getChatId())) {
+                return true;
+            }
+        }
         return false;
     }
 }

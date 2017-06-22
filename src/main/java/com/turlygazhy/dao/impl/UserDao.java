@@ -1,5 +1,6 @@
 package com.turlygazhy.dao.impl;
 
+import com.turlygazhy.dao.DaoFactory;
 import com.turlygazhy.entity.User;
 import org.telegram.telegrambots.api.objects.Contact;
 
@@ -45,8 +46,8 @@ public class UserDao {
         }
     }
 
-    public boolean isAdmin(Long chatId) {
-        return Objects.equals(chatId, getAdminChatId());
+    public boolean isAdmin(Long chatId) throws SQLException {
+        return getUserByChatId(chatId).getRules() == 2;
     }
 
     public Long getChatIdByUserId(Long id) throws SQLException {
@@ -90,6 +91,7 @@ public class UserDao {
         user.setBirthday(rs.getString("BIRTHDAY"));
         user.setAddedBy(rs.getLong("ADDED_BY"));
         user.setAdded(rs.getBoolean("IS_ADDED"));
+        user.setRules(rs.getInt("RULES"));
         return user;
     }
 
@@ -126,10 +128,11 @@ public class UserDao {
     }
 
     public void updateUser(User user) throws SQLException {
-        PreparedStatement ps = connection.prepareStatement("UPDATE USER SET ADDED_BY = ?, IS_ADDED = ? WHERE ID = ?");
+        PreparedStatement ps = connection.prepareStatement("UPDATE USER SET ADDED_BY = ?, IS_ADDED = ?, RULES = ? WHERE ID = ?");
         ps.setLong(1, user.getAddedBy());
         ps.setBoolean(2, user.isAdded());
-        ps.setInt(3, user.getId());
+        ps.setInt(3, user.getRules());
+        ps.setInt(4, user.getId());
         ps.execute();
     }
 
@@ -158,6 +161,18 @@ public class UserDao {
     public List<User> getUsers() throws SQLException {
         List<User> users = new ArrayList<>();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM USER WHERE IS_ADDED = TRUE");
+        ps.execute();
+        ResultSet rs = ps.getResultSet();
+        while (rs.next()){
+            users.add(parseUser(rs));
+        }
+        return users;
+    }
+
+    public List<User> getUsers(int rules) throws SQLException {
+        List<User> users = new ArrayList<>();
+        PreparedStatement ps = connection.prepareStatement("SELECT * FROM USER WHERE RULES = ?");
+        ps.setInt(1, rules);
         ps.execute();
         ResultSet rs = ps.getResultSet();
         while (rs.next()){

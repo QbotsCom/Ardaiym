@@ -83,14 +83,20 @@ public class SignUpCommand extends Command {
                 } else {
                     user.setHaveCar(false);
                 }
-                sendMessage(17, chatId, bot);   // Ваша кандидатура на рассмотрении
+                sendMessage(17, chatId, bot);   // Вас представить группе?
+                waitingType = WaitingType.SHOW_USER;
+                return false;
+
+            case SHOW_USER:
+                if (updateMessageText.equals(buttonDao.getButtonText(22))) { // Да
+                    bot.sendMessage(new SendMessage()
+                    .setChatId(groupDao.select(1).getChatId())
+                    .setText(user.toString()));
+                }
+
                 userDao.addUser(user);
                 user = userDao.getUserByChatId(user.getChatId());
 
-                bot.sendMessage(new SendMessage()
-                        .setChatId(groupDao.select(1).getChatId())
-                        .setText(messageDao.getMessageText(18) + user.getName())
-                        .setReplyMarkup(getInlineKeyboard()));
                 return true;
 
         }

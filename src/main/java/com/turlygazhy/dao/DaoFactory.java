@@ -2,7 +2,6 @@ package com.turlygazhy.dao;
 
 import com.turlygazhy.connection_pool.ConnectionPool;
 import com.turlygazhy.dao.impl.*;
-import com.turlygazhy.entity.AboutMessage;
 
 import java.sql.Connection;
 
@@ -98,8 +97,8 @@ public class DaoFactory {
         return new ParticipantOfStockDao(connection);
     }
 
-    public AboutMessageDao getAboutMessageDao() {
-        return new AboutMessageDao(connection);
+    public InfoMessageDao getAboutMessageDao() {
+        return new InfoMessageDao(connection);
     }
 
     public NewsDao getNewsDao() {

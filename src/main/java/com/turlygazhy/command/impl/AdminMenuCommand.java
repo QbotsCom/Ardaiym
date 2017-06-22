@@ -26,6 +26,6 @@ public class AdminMenuCommand extends Command {
         }
         sendMessage(6, chatId, bot);
 
-        return false;
+        return true;
     }
 }

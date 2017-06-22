@@ -3,7 +3,7 @@ package com.turlygazhy.entity;
 /**
  * Created by lol on 08.06.2017.
  */
-public class AboutMessage {
+public class InfoMessage {
     private int id;
     private String text;
     private String photo;

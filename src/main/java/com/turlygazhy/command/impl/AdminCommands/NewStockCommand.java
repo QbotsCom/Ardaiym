@@ -1,4 +1,4 @@
-package com.turlygazhy.command.impl;
+package com.turlygazhy.command.impl.AdminCommands;
 
 import com.turlygazhy.Bot;
 import com.turlygazhy.command.Command;
@@ -68,7 +68,7 @@ public class NewStockCommand extends Command {
                     bot.editMessageText(new EditMessageText()
                             .setMessageId(updateMessage.getMessageId())
                             .setChatId(chatId)
-                            .setText(messageDao.getMessageText(22)) // Введите дедлайн
+                            .setText(messageDao.getMessageText(22))     // Введите дедлайн
                             .setReplyMarkup(getDeadlineKeyboard(shownDates))
                     );
                     return false;
@@ -79,12 +79,13 @@ public class NewStockCommand extends Command {
                     bot.editMessageText(new EditMessageText()
                             .setMessageId(updateMessage.getMessageId())
                             .setChatId(chatId)
-                            .setText(messageDao.getMessageText(22)) // Введите дедлайн
+                            .setText(messageDao.getMessageText(22))     // Введите дедлайн
                             .setReplyMarkup(getDeadlineKeyboard(shownDates))
                     );
                     return false;
                 }
                 stock.setDate(updateMessageText);
+                stock.setAddedBy(userDao.getUserByChatId(chatId));
                 stock = stockDao.addStock(stock);
                 sendMessage(23, chatId, bot);
 

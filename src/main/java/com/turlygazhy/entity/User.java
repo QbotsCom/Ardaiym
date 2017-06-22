@@ -13,6 +13,7 @@ public class User {
     private String birthday;
     private boolean haveCar;
     private Long addedBy;
+    private int rules;
 
     public boolean isAdded() {
         return isAdded;
@@ -94,6 +95,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getRules() {
+        return rules;
+    }
+
+    public void setRules(int rules) {
+        this.rules = rules;
     }
 
     @Override

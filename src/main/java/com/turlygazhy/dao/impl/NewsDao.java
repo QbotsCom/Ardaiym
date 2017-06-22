@@ -20,6 +20,18 @@ public class NewsDao extends AbstractDao {
         this.connection = connection;
     }
 
+    public List<News> getAllNews() throws SQLException {
+        List<News> news = new ArrayList<>();
+
+        PreparedStatement ps = connection.prepareStatement("SELECT * FROM NEWS");
+        ps.execute();
+        ResultSet rs = ps.getResultSet();
+        while (rs.next()){
+            news.add(parseNews(rs));
+        }
+        return news;
+    }
+
     public List<News> getNews() throws SQLException {
         List<News> news = new ArrayList<>();
 

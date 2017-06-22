@@ -11,11 +11,12 @@ public class Stock {
     private String name;
     private String description;
     private String date;
+    private User addedBy;
     private List<String> typeOfWork;
     private List<ParticipantOfStock> participantOfStocks;
+    private boolean finished;
 
     public int getId() {
-
         return id;
     }
 
@@ -73,6 +74,22 @@ public class Stock {
 
     public void setTypeOfWork(List<String> typeOfWork) {
         this.typeOfWork = typeOfWork;
+    }
+
+    public User getAddedBy() {
+        return addedBy;
+    }
+
+    public void setAddedBy(User addedBy) {
+        this.addedBy = addedBy;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 
     @Override

@@ -2,8 +2,8 @@ package com.turlygazhy.command.impl;
 
 import com.turlygazhy.Bot;
 import com.turlygazhy.command.Command;
-import com.turlygazhy.entity.AboutMessage;
-import com.turlygazhy.entity.Message;
+import com.turlygazhy.dao.impl.InfoMessageDao;
+import com.turlygazhy.entity.InfoMessage;
 import com.turlygazhy.entity.News;
 import com.turlygazhy.entity.WaitingType;
 import org.telegram.telegrambots.api.methods.ParseMode;
@@ -21,12 +21,21 @@ import java.util.List;
 
 public class MainMenuCommand extends Command {
 
+    private Command command;
+
     protected MainMenuCommand() throws SQLException {
     }
 
     @Override
     public boolean execute(Update update, Bot bot) throws SQLException, TelegramApiException {
         initMessage(update, bot);
+
+        if (command != null) {
+            if (command.execute(update, bot)) {
+                command = null;
+            }
+            return false;
+        }
 
         if (waitingType == null) {
             sendMessage(5, chatId, bot);        // Главное меню
@@ -37,51 +46,49 @@ public class MainMenuCommand extends Command {
         switch (waitingType) {
             case COMMAND:
                 if (updateMessageText.equals(buttonDao.getButtonText(50))) {     // О нас
-                    AboutMessage aboutMessage = aboutMessageDao.getAbout();
-                    sendMessage(aboutMessage.getText(), chatId, bot);
-                    if (aboutMessage.getPhoto() != null) {
+                    InfoMessage infoMessage = infoMessageDao.getInfoMessage(InfoMessageDao.ABOUT_ID);
+                    sendMessage(infoMessage.getText(), chatId, bot);
+                    if (infoMessage.getPhoto() != null) {
                         bot.sendPhoto(new SendPhoto()
-                                .setPhoto(aboutMessage.getPhoto())
+                                .setPhoto(infoMessage.getPhoto())
                                 .setChatId(chatId));
                     }
                     return false;
                 }
 
                 if (updateMessageText.equals(buttonDao.getButtonText(51))) {     // Контакты
-                    AboutMessage aboutMessage = aboutMessageDao.getContacts();
-                    sendMessage(aboutMessage.getText(), chatId, bot);
-                    if (aboutMessage.getPhoto() != null) {
+                    InfoMessage infoMessage = infoMessageDao.getInfoMessage(InfoMessageDao.CONTACTS);
+                    sendMessage(infoMessage.getText(), chatId, bot);
+                    if (infoMessage.getPhoto() != null) {
                         bot.sendPhoto(new SendPhoto()
-                                .setPhoto(aboutMessage.getPhoto())
+                                .setPhoto(infoMessage.getPhoto())
                                 .setChatId(chatId));
                     }
                     return false;
                 }
 
                 if (updateMessageText.equals(buttonDao.getButtonText(52))) {     // Личный кабинет
-                    sendMessage("Personal Area", chatId, bot);
+                    if (command == null) {
+                        command = new PersonalAreaCommand();
+                        command.execute(update, bot);
+                    }
                     return false;
                 }
 
                 if (updateMessageText.equals(buttonDao.getButtonText(53))) {     // Группа
-                    AboutMessage aboutMessage = aboutMessageDao.getGroup();
-                    sendMessage(aboutMessage.getText(), chatId, bot);
-                    if (aboutMessage.getPhoto() != null) {
+                    InfoMessage infoMessage = infoMessageDao.getInfoMessage(InfoMessageDao.GROUP_ID);
+                    sendMessage(infoMessage.getText(), chatId, bot);
+                    if (infoMessage.getPhoto() != null) {
                         bot.sendPhoto(new SendPhoto()
-                                .setPhoto(aboutMessage.getPhoto())
+                                .setPhoto(infoMessage.getPhoto())
                                 .setChatId(chatId));
                     }
                     return false;
                 }
 
-                if (updateMessageText.equals(buttonDao.getButtonText(54))) {     // Планы на год
-                    AboutMessage aboutMessage = aboutMessageDao.getPlansForYear();
-                    sendMessage(aboutMessage.getText(), chatId, bot);
-                    if (aboutMessage.getPhoto() != null) {
-                        bot.sendPhoto(new SendPhoto()
-                                .setPhoto(aboutMessage.getPhoto())
-                                .setChatId(chatId));
-                    }
+                if (updateMessageText.equals(buttonDao.getButtonText(54))) {     // Календарь событий
+                    command = new CalendarOfEventsCommand();
+                    command.execute(update, bot);
                     return false;
                 }
 
@@ -114,7 +121,8 @@ public class MainMenuCommand extends Command {
                         .setChatId(chatId)
                         .setText(newsObj.toString())
                         .setParseMode(ParseMode.HTML)
-                        .setReplyMarkup(keyboardMarkUpDao.select(5)));
+                        .setReplyMarkup(keyboardMarkUpDao.select(1)));
+                waitingType = WaitingType.COMMAND;
 
                 if (newsObj.getPhoto() != null) {
                     String[] photos = newsObj.getPhoto().split(";");
@@ -123,7 +131,6 @@ public class MainMenuCommand extends Command {
                                 .setChatId(chatId)
                                 .setPhoto(photo));
                 }
-                waitingType = WaitingType.COMMAND;
                 return false;
         }
 

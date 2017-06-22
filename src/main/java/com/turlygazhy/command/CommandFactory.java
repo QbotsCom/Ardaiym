@@ -1,6 +1,7 @@
 package com.turlygazhy.command;
 
 import com.turlygazhy.command.impl.*;
+import com.turlygazhy.command.impl.AdminCommands.*;
 import com.turlygazhy.exception.NotRealizedMethodException;
 
 import java.sql.SQLException;
@@ -30,6 +31,8 @@ public class CommandFactory {
                 return new EditDescriptionCommand();
             case EDIT_NEWS:
                 return new NewsMenuCommand();
+            case ADD_ADMIN:
+                return new AddAdminCommand();
             default:
                 throw new NotRealizedMethodException("Not realized for type: " + type);
         }

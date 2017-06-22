@@ -1,4 +1,4 @@
-package com.turlygazhy.command.impl;
+package com.turlygazhy.command.impl.AdminCommands;
 
 import com.turlygazhy.Bot;
 import com.turlygazhy.command.Command;
@@ -43,7 +43,7 @@ public class NewsMenuCommand extends Command {
                 }
                 if (updateMessageText.equals(buttonDao.getButtonText(71))) {    // Редактировать новость
                     sendMessage(109, chatId, bot);      // Выберите новость
-                    List<News> news = newsDao.getNews();
+                    List<News> news = newsDao.getAllNews();
                     StringBuilder sb = new StringBuilder();
                     for (News newsObj : news) {
                         sb.append("/id").append(newsObj.getId()).append(" - ").append(newsObj.getTitle()).append("\n");
