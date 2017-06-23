@@ -33,6 +33,12 @@ public class CommandFactory {
                 return new NewsMenuCommand();
             case ADD_ADMIN:
                 return new AddAdminCommand();
+            case SURVEY:
+                return new SurveyCommand();
+            case NEW_SURVEY:
+                return new NewSurveyCommand();
+            case SURVEY_MENU:
+                return new SurveyMenuCommand();
             default:
                 throw new NotRealizedMethodException("Not realized for type: " + type);
         }

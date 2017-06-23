@@ -48,6 +48,10 @@ public abstract class Command {
     protected ParticipantOfStockDao participantOfStockDao = factory.getParticipantOfStackDao();
     protected InfoMessageDao infoMessageDao = factory.getAboutMessageDao();
     protected NewsDao newsDao = factory.getNewsDao();
+    protected SurveyDao surveyDao = factory.getSurveyDao();
+    protected QuestionDao questionDao = factory.getQuestionDao();
+    protected QuestionButtonDao questionButtonDao = factory.getQuestionButtonDao();
+    protected AnswerDao answerDao = factory.getAnswerDao();
 
     protected WaitingType waitingType;
     protected org.telegram.telegrambots.api.objects.Message updateMessage;

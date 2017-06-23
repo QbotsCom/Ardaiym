@@ -1,11 +1,9 @@
 package com.turlygazhy.command.impl.AdminCommands;
 
 import com.turlygazhy.Bot;
+import com.turlygazhy.Conversation;
 import com.turlygazhy.command.Command;
-import com.turlygazhy.entity.ParticipantOfStock;
-import com.turlygazhy.entity.Stock;
-import com.turlygazhy.entity.User;
-import com.turlygazhy.entity.WaitingType;
+import com.turlygazhy.entity.*;
 import javassist.bytecode.ExceptionsAttribute;
 import org.telegram.telegrambots.api.methods.ParseMode;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -149,13 +147,29 @@ public class ShowStocksCommand extends Command {
     }
 
     private void sendSurvey(List<User> users, Bot bot) throws SQLException, TelegramApiException {
-        ReplyKeyboard keyboardMarkup = getSurveyKeyboard();
+        //// Создаем опрос для акции /////
+        Survey survey = new Survey();
+        survey.setText(stock.getName());    // Название опроса = название акции
+        Question question = new Question();
+        question.setText(messageDao.getMessageText(142));   // Создаем вопрос
+        for (int i = 0; i < 5; i++) {
+            QuestionButton button = new QuestionButton();   // Создаем кнопки с рейтингом от 1 до 5
+            button.setText(String.valueOf(i+1));
+            question.addQuestionButton(button);
+        }
+        survey.addQuestion(question);   // Добавляем вопрос с вариантами ответа
+        question = new Question();      // Создаем еще 1 вопрос
+        question.setText(messageDao.getMessageText(143));
+        QuestionButton button = new QuestionButton();       // Создаем вариант ответа "Свой вариант ответа"
+        button.setText(buttonDao.getButtonText(38));
+        question.addQuestionButton(button);             // добавляем вариант ответа в вопрос
+        surveyDao.insertSurvey(survey);                 // Добавляем опрос в базу данных
+        ReplyKeyboard keyboardMarkup = getSurveyKeyboard(survey.getId());
         for (User user : users) {
             try {
-//                sendMessage("Survey", user.getChatId(), bot);
                 bot.sendMessage(new SendMessage()
                         .setChatId(user.getChatId())
-                        .setText("Survey")
+                        .setText(stock.getName())
                         .setReplyMarkup(keyboardMarkup));
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -165,17 +179,15 @@ public class ShowStocksCommand extends Command {
         }
     }
 
-    private ReplyKeyboard getSurveyKeyboard() {
+    private ReplyKeyboard getSurveyKeyboard(int surveyId) throws SQLException {
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-        for (int i = 1; i < 6; i++) {
-            List<InlineKeyboardButton> row = new ArrayList<>();
-            InlineKeyboardButton button = new InlineKeyboardButton();
-            button.setText(String.valueOf(i));
-            button.setCallbackData("cmd=SurveyCommand rating=" + i);
-            row.add(button);
-            keyboard.add(row);
-        }
+        List<InlineKeyboardButton> row = new ArrayList<>();
+        InlineKeyboardButton button = new InlineKeyboardButton();
+        button.setText(buttonDao.getButtonText(100));
+        button.setCallbackData("survey=" + surveyId + " cmd=SurveyCommand");
+        row.add(button);
+        keyboard.add(row);
         keyboardMarkup.setKeyboard(keyboard);
         return keyboardMarkup;
     }

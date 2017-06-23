@@ -70,7 +70,7 @@ public class PersonalAreaCommand extends com.turlygazhy.command.Command {
                 return false;
 
             case CHOOSE_TASK:
-                int stockId = Integer.parseInt(updateMessageText.substring(3));
+                  int stockId = Integer.parseInt(updateMessageText.substring(3));
                 participantOfStock = participantOfStockDao.getParticipantOfStockById(stockId);
                 stock = stockDao.getStock(participantOfStock.getStockId());
 

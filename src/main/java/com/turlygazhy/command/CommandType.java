@@ -15,7 +15,10 @@ public enum CommandType {
     ADD_ADMIN(14),
     ADMIN_NEW_STOCK(20),
     ADMIN_NEW_DISTRIBUTION(21),
-    SHOW_STOCK(22);
+    SHOW_STOCK(22),
+    SURVEY(30),
+    NEW_SURVEY(31),
+    SURVEY_MENU(32);
 
 
     private final int id;

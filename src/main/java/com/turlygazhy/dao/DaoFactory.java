@@ -104,6 +104,23 @@ public class DaoFactory {
     public NewsDao getNewsDao() {
         return new NewsDao(connection);
     }
+
+    public QuestionButtonDao getQuestionButtonDao() {
+        return new QuestionButtonDao(connection);
+    }
+
+    public AnswerDao getAnswerDao() {
+        return new AnswerDao(connection);
+    }
+
+    public QuestionDao getQuestionDao() {
+        return new QuestionDao(connection);
+    }
+
+    public SurveyDao getSurveyDao() {
+        return new SurveyDao(connection);
+    }
+
     }
 
 

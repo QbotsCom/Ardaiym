@@ -28,7 +28,12 @@ public class Conversation {
         org.telegram.telegrambots.api.objects.Message updateMessage = update.getMessage();
         String inputtedText;
         if (updateMessage == null) {
-            inputtedText = update.getCallbackQuery().getData();
+            try {
+                String data = update.getCallbackQuery().getData();
+                inputtedText = data.substring(data.indexOf("cmd=")+4);
+            } catch (Exception ex) {
+                inputtedText = update.getCallbackQuery().getData();
+            }
             updateMessage = update.getCallbackQuery().getMessage();
         } else {
             inputtedText = updateMessage.getText();
@@ -38,23 +43,25 @@ public class Conversation {
             command = commandService.getCommand(inputtedText);
         } catch (CommandNotFoundException e) {
             if (updateMessage.isGroupMessage()) {
-                if(update.getCallbackQuery().getData() != null){
-                    String commandString = update.getCallbackQuery().getData();
-                    commandString = commandString.substring(commandString.indexOf("cmd=")+4);
-                    try {
-                        command = commandService.getCommand(commandString);
-                    } catch (CommandNotFoundException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-//                return;
+//                if (update.getCallbackQuery().getData() != null) {
+//                    String commandString = update.getCallbackQuery().getData();
+//                    commandString = commandString.substring(commandString.indexOf("cmd=") + 4);
+//                    try {
+//                        command = commandService.getCommand(commandString);
+//                    } catch (CommandNotFoundException e1) {
+//                        e1.printStackTrace();
+//                    }
+//                }
+                return;
             }
-            if (command == null) {
-                command = new ShowInfoCommand();
-                int cannotHandleUpdateMessageId = 7;
-                command.setMessageId(cannotHandleUpdateMessageId);
-            }
+
         }
+        if (command == null) {
+            command = new ShowInfoCommand();
+            int cannotHandleUpdateMessageId = 7;
+            command.setMessageId(cannotHandleUpdateMessageId);
+        }
+
 
         boolean commandFinished = command.execute(update, bot);
         if (commandFinished) {
