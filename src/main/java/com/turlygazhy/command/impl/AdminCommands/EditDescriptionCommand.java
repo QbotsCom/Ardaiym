@@ -2,8 +2,7 @@ package com.turlygazhy.command.impl.AdminCommands;
 
 import com.turlygazhy.Bot;
 import com.turlygazhy.command.Command;
-import com.turlygazhy.dao.impl.InfoMessageDao;
-import com.turlygazhy.entity.InfoMessage;
+import com.turlygazhy.dao.impl.MessageDao;
 import com.turlygazhy.entity.WaitingType;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
@@ -21,7 +20,7 @@ import java.util.List;
  */
 
 public class EditDescriptionCommand extends Command {
-    private InfoMessage infoMessage;
+    private int id;
 
     public EditDescriptionCommand() throws SQLException {
     }
@@ -32,7 +31,7 @@ public class EditDescriptionCommand extends Command {
 
         if (waitingType == null) {
             bot.sendMessage(new SendMessage()
-                    .setText("Choose Message")
+                    .setText(messageDao.getMessageText(147))    // Выберите сообщение
                     .setChatId(chatId)
                     .setReplyMarkup(getKeyboard()));
             waitingType = WaitingType.CHOOSE;
@@ -41,19 +40,14 @@ public class EditDescriptionCommand extends Command {
 
         switch (waitingType) {
             case CHOOSE:
-                infoMessage = infoMessageDao.getInfoMessage(Integer.parseInt(updateMessageText));
-                sendMessage("Write new text", chatId, bot);
+                id = Integer.parseInt(updateMessageText);
+                sendMessage(148, chatId, bot);  // Введите сообщение
                 waitingType = WaitingType.TEXT;
                 return false;
 
             case TEXT:
-                infoMessage.setText(updateMessageText);
-                infoMessageDao.updateAbout(infoMessage);
-                sendMessage("Done", chatId, bot);
-                return true;
-
-            case PHOTO:
-
+                messageDao.updateText(updateMessageText, id);
+                sendMessage(149, chatId, bot);  // Готово
                 return true;
         }
         return false;
@@ -65,17 +59,17 @@ public class EditDescriptionCommand extends Command {
         List<InlineKeyboardButton> row = new ArrayList<>();
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText(buttonDao.getButtonText(50));
-        button.setCallbackData(String.valueOf(InfoMessageDao.ABOUT_ID));
+        button.setCallbackData(String.valueOf(MessageDao.ABOUT_ID));
         row.add(button);
 
         button = new InlineKeyboardButton();
         button.setText(buttonDao.getButtonText(51));
-        button.setCallbackData(String.valueOf(InfoMessageDao.CONTACTS));
+        button.setCallbackData(String.valueOf(MessageDao.CONTACTS));
         row.add(button);
 
         button = new InlineKeyboardButton();
         button.setText(buttonDao.getButtonText(53));
-        button.setCallbackData(String.valueOf(InfoMessageDao.GROUP_ID));
+        button.setCallbackData(String.valueOf(MessageDao.GROUP_ID));
         row.add(button);
 
         keyboardList.add(row);

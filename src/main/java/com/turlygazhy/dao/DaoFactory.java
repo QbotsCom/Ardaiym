@@ -97,10 +97,6 @@ public class DaoFactory {
         return new ParticipantOfStockDao(connection);
     }
 
-    public InfoMessageDao getAboutMessageDao() {
-        return new InfoMessageDao(connection);
-    }
-
     public NewsDao getNewsDao() {
         return new NewsDao(connection);
     }

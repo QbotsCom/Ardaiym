@@ -25,6 +25,10 @@ public class MessageDao extends AbstractDao {
     private static final String UPDATE_PHOTO = "UPDATE PUBLIC.MESSAGE SET PHOTO = ? WHERE ID = ?";
     private static final String UPDATE_TEXT = "UPDATE PUBLIC.MESSAGE SET TEXT = ? WHERE ID = ?";
 
+    public static final int ABOUT_ID = 1;
+    public static final int CONTACTS = 2;
+    public static final int GROUP_ID = 3;
+
 
     private Connection connection;
 

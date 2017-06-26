@@ -37,20 +37,26 @@ public class ShowInfoCommand extends Command {
         }
 
         if (command != null) {
-            return command.execute(update, bot);
+            if (command.execute(update, bot)) {
+                command = null;
+            }
+            return false;
         }
 
         user = userDao.getUserByChatId(chatId);
         if (user == null) {
             sendMessage(10, chatId, bot);   // Чтобы продолжить, нужно зарегистрироваться
             command = new SignUpCommand();
-            return command.execute(update, bot);
+            if (command.execute(update, bot)) {
+                command = null;
+            }
+            return false;
+        }
+        command = new MainMenuCommand();
+        if (command.execute(update, bot)) {
+            command = null;
         }
 
-        if (user.isAdded()) {
-            command = new MainMenuCommand();
-            return command.execute(update, bot);
-        }
         return false;
     }
 }

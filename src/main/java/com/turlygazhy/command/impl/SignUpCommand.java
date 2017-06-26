@@ -83,20 +83,24 @@ public class SignUpCommand extends Command {
                 } else {
                     user.setHaveCar(false);
                 }
+                userDao.addUser(user);
+                userDao.getUserByChatId(user.getChatId());
                 sendMessage(17, chatId, bot);   // Вас представить группе?
                 waitingType = WaitingType.SHOW_USER;
                 return false;
 
             case SHOW_USER:
                 if (updateMessageText.equals(buttonDao.getButtonText(22))) { // Да
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(messageDao.getMessageText(153)).append(user.getName()).append("\n")
+                            .append(user.getBirthday()).append("\n")
+                            .append(user.getCity()).append("\n");
                     bot.sendMessage(new SendMessage()
-                    .setChatId(groupDao.select(1).getChatId())
-                    .setText(user.toString()));
+                            .setChatId(groupDao.select(1).getChatId())
+                            .setText(sb.toString()));
                 }
-
-                userDao.addUser(user);
-                user = userDao.getUserByChatId(user.getChatId());
-
+                sendMessage(messageDao.getMessageText(155) + groupDao.select(1).getChatLink(), chatId, bot);
+                sendMessage(5, chatId, bot);    // Главное меню
                 return true;
 
         }

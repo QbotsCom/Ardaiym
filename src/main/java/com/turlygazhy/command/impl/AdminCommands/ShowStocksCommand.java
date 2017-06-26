@@ -59,6 +59,10 @@ public class ShowStocksCommand extends Command {
 
                 if (updateMessageText.equals(buttonDao.getButtonText(46))) {    // Предстоящие акции
                     stocks = stockDao.getAllStocks(false);
+                    if (stocks.size() == 0){
+                        sendMessage(152, chatId, bot);  // Нет предстоящих акции
+                        return false;
+                    }
                     StringBuilder sb = new StringBuilder();
                     Date date = new Date();
                     int dateInt = date.getDate() + (date.getMonth() + 1) * 100;

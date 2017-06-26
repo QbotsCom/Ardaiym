@@ -46,7 +46,6 @@ public abstract class Command {
     protected SavedResultsDao savedResultsDao = factory.getSavedResultsDao();
     protected StockDao stockDao = factory.getStockDao();
     protected ParticipantOfStockDao participantOfStockDao = factory.getParticipantOfStackDao();
-    protected InfoMessageDao infoMessageDao = factory.getAboutMessageDao();
     protected NewsDao newsDao = factory.getNewsDao();
     protected SurveyDao surveyDao = factory.getSurveyDao();
     protected QuestionDao questionDao = factory.getQuestionDao();

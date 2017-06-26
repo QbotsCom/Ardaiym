@@ -51,6 +51,9 @@ public class NewDistributionCommand extends Command {
                     return false;
                 }
                 if (updateMessageText.equals(buttonDao.getButtonText(81))) { // Для волонтеров акции
+                    if (stockDao.getUndoneStocks().size() == 0){
+                        sendMessage(151, chatId, bot);  // Нет действующих акции
+                    }
                     bot.sendMessage(new SendMessage()
                             .setChatId(chatId)
                             .setText(messageDao.getMessageText(42))

@@ -42,6 +42,10 @@ public class NewStockCommand extends Command {
 
         switch (waitingType) {
             case NAME:
+                if (updateMessageText.equals(buttonDao.getButtonText(10))) {
+                    sendMessage(7, chatId, bot);
+                    return true;
+                }
                 stock.setName(updateMessage.getText());
                 sendMessage(21, chatId, bot);       // Введите описание
                 waitingType = WaitingType.DESCRIPTION;
@@ -55,6 +59,9 @@ public class NewStockCommand extends Command {
 
             case TYPE_OF_WORK:
                 if (updateMessageText.equals(buttonDao.getButtonText(12))) {     // Готово
+                    if (stock.getTypeOfWork().size() == 0){
+                        sendMessage(154, chatId, bot);  // Введите хотя бы 1 вид работ
+                    }
                     waitingType = WaitingType.DATE;
                     sendMessage(22, getDeadlineKeyboard(shownDates));       // Назначьте дату акции
                     return false;

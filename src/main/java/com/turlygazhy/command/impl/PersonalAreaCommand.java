@@ -34,15 +34,15 @@ public class PersonalAreaCommand extends com.turlygazhy.command.Command {
             return false;
         }
 
-        if (updateMessageText.equals(buttonDao.getButtonText(93))) {
-            sendMessage("Write report", chatId, bot);
+        if (updateMessageText.equals(buttonDao.getButtonText(93))) {    // Выполнено
+            sendMessage(146, chatId, bot);  // Напишите отчет
             waitingType = WaitingType.MESSAGE;
             return false;
         }
 
         switch (waitingType) {
             case COMMAND:
-                if (updateMessageText.equals(buttonDao.getButtonText(90))) {
+                if (updateMessageText.equals(buttonDao.getButtonText(90))) {    // Мои задачи
                     sendMessage(121, chatId, bot);
                     waitingType = WaitingType.CHOOSE_TYPE_OF_WORK;
                     return false;
@@ -50,13 +50,17 @@ public class PersonalAreaCommand extends com.turlygazhy.command.Command {
                 return false;
 
             case CHOOSE_TYPE_OF_WORK:
+                if (updateMessageText.equals(buttonDao.getButtonText(10))) {
+                    sendMessage(5, chatId, bot);    // Главное меню
+                    return true;
+                }
                 List<ParticipantOfStock> participantOfStockList = null;
-                if (updateMessageText.equals(buttonDao.getButtonText(91))) {
+                if (updateMessageText.equals(buttonDao.getButtonText(91))) {    // Выполненные задачи
                     participantOfStockList = participantOfStockDao.getParticipantOfStock(chatId, true);
                     waitingType = WaitingType.CHOOSE_TASK;
                 }
 
-                if (updateMessageText.equals(buttonDao.getButtonText(92))) {
+                if (updateMessageText.equals(buttonDao.getButtonText(92))) {    // Невыполненные задачи
                     participantOfStockList = participantOfStockDao.getParticipantOfStock(chatId, false);
                     waitingType = WaitingType.CHOOSE_TASK;
                 }
@@ -65,12 +69,21 @@ public class PersonalAreaCommand extends com.turlygazhy.command.Command {
                 for (ParticipantOfStock stock : participantOfStockList) {
                     sb.append("/id").append(stock.getId()).append(" - ").append(stock.getTypeOfWork()).append("\n");
                 }
-                sendMessage(sb.toString(), chatId, bot);
+                bot.sendMessage(new SendMessage()
+                        .setChatId(chatId)
+                        .setText(sb.toString())
+                        .setReplyMarkup(keyboardMarkUpDao.select(9)));
                 waitingType = WaitingType.CHOOSE_TASK;
                 return false;
 
             case CHOOSE_TASK:
-                  int stockId = Integer.parseInt(updateMessageText.substring(3));
+                if (updateMessageText.equals(buttonDao.getButtonText(10))) {
+                    sendMessage(121, chatId, bot);
+                    waitingType = WaitingType.CHOOSE_TYPE_OF_WORK;
+                    return false;
+
+                }
+                int stockId = Integer.parseInt(updateMessageText.substring(3));
                 participantOfStock = participantOfStockDao.getParticipantOfStockById(stockId);
                 stock = stockDao.getStock(participantOfStock.getStockId());
 

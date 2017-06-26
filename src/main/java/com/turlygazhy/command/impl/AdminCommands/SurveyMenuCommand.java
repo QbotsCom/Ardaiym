@@ -46,6 +46,11 @@ public class SurveyMenuCommand extends Command {
 
                 return false;
             case CHOOSE:
+                if (updateMessageText.equals(buttonDao.getButtonText(10))) {    // Назад
+                    sendMessage(145, chatId, bot);
+                    waitingType = WaitingType.COMMAND;
+                    return false;
+                }
                 survey = surveyDao.getSurvey(Integer.parseInt(updateMessageText.substring(3)));
                 sendStatistic(survey, bot);
                 return false;
